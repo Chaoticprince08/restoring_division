@@ -1,6 +1,7 @@
 
 `include "restoring_division_datapath.v"
 `include "restoring_division_controlpath.v"
+`include "lcd_module.v"
 `timescale 1ns/1ps
 
 module restoring_division_topmodule (
@@ -9,12 +10,15 @@ module restoring_division_topmodule (
     input start,
     input [3:0] dividend,
     input [3:0] divisor,
-    output [3:0] quotient,
+    //output [3:0] quotient,
     output [4:0] remainder,
+    output [6:0] seg,
+    output [3:0] digit,
     output done
 );
 
 //Internal signals
+wire [3:0] quotient;
 wire select_A;
 wire select_Q;
 wire ld_A;
@@ -70,6 +74,15 @@ restoring_division_controlpath controlpath(
     .count_enable(count_enable),
     .ld_rem_quotient(ld_rem_quotient),
     .done(done)
+);
+
+//Instantiate the LCD module
+lcd_module ssd(
+    .clk(clk),
+    .rst(rst),
+    .quotient(quotient),
+    .seg(seg),
+    .digit(digit)
 );
 
 endmodule
